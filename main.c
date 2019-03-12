@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define TRUE 1
+#define FALSE 0
+
 /* # BANKER'S Algorthim
  *
  * For this projet, you will write a multithreaded program that implements 
@@ -54,25 +57,43 @@ int need[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
  Why was the request denied or granted. */
 
 // (4 pts) implementation of safety algorithm
-int safety(/* TODO */);
+int safety(){
+    int finish[NUMBER_OF_CUSTOMERS] = {FALSE},
+        i =0, 
+        j =0;
 
-    /* (4 pts) implementation of request_resources
-    // TODO: These functions should return 0 if successful otherwise -1
-    // TODO: NEEDS MUTEX LOCKS */
-    int request_resources(int customer_num, int request[]);
-    int release_resources(int customer_num, int release[]);
+    while ( i < NUMBER_OF_CUSTOMERS && !finish[i] /*&& Need <= work  */){
+        // work[i] += allocation
+        finish[i] = TRUE;
+        i++;
+    }
 
-    int main(int argc, char** argv){
-        int  i;
+    for (j= 0; j < i ;j++)
+        if (!finish[j]) // if a process == False then not in a safe state
+            return FALSE;
 
-        for (i=1; i < argc; ++i){
-            available[i] = atoi(argv[i]); // copy resources to avav.
-        }
+    
 
-        // (4 pts) implementation of customer threads
+    return TRUE; 
+}
 
-        // (4 pts) overall working program
+/* (4 pts) implementation of request_resources
+// TODO: These functions should return 0 if successful otherwise -1
+// TODO: NEEDS MUTEX LOCKS */
+int request_resources(int customer_num, int request[]);
+int release_resources(int customer_num, int release[]);
 
-        return 0;
-    } 
+int main(int argc, char** argv){
+    int  i;
+
+    for (i=1; i < argc; ++i){
+        available[i] = atoi(argv[i]); // copy resources to avav.
+    }
+
+    // (4 pts) implementation of customer threads
+
+    // (4 pts) overall working program
+
+    return 0;
+} 
 //----------------------------------------------------------------------------- 
