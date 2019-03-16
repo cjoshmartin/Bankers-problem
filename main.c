@@ -34,6 +34,9 @@ enum bool {FALSE=0, TRUE=1};
 
 // the available amount of each resource
 int available[NUMBER_OF_RESOURCES];
+
+void updateAvailable(int size);
+
 // the maximum demand of each customer
 int maximum[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
 
@@ -121,7 +124,7 @@ int isSafe(){
             printf("System failed");
             return FALSE;
         }
-    } // end of while
+    } // end of while , TODO: Could make this into thread
 
     printf("System is in safe state.\nSafe sequence is: ");
     for (i = 0; i < NUMBER_OF_CUSTOMERS; i++)
@@ -144,15 +147,46 @@ struct thread
     int * process; // same for all
 };
 
+
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+// https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/7_Deadlocks.html
+
 int request_resources(int customer_num, int request[]){
-//    pthread_mutex_lock(&mutex);
 
     if (!isSafe())
         return failure;
 
-//    pthread_mutex_unlock(&mutex);
+    for (int i = 0; i < NUMBER_OF_CUSTOMERS ; i++){
+        for (int j = 0; j < NUMBER_OF_RESOURCES ; ++j) {
+            if ( request[i] > need[i][j])
+                return failure;
+        }
+    }
+
+    while (request[customer_num] > available[customer_num]) {//TODO: Look at last TODO LOL
+        pthread_mutex_lock(&mutex);
+    }
+    pthread_mutex_unlock(&mutex);
+
+    // TODO
+
+    /*
+     * Check to see if the request can be granted safely, by pretending it has been granted and then seeing if the
+     * resulting state is safe. If so, grant the request, and if not, then the process must wait until its request
+     * can be granted safely.The procedure for granting a request ( or pretending to for testing purposes ) is:
+     * - Available = Available - Request
+     * - Allocation = Allocation + Request
+     * - Need = Need - Request
+     */
+
+    available[customer_num]  -= request[customer_num];
+
+    for (int i = 0; i < NUMBER_OF_CUSTOMERS; ++i) {
+        allocation[customer_num][i] += request[customer_num]; // TODO: maybe is wrong
+        need[customer_num][i] -= request[i];
+    }
+
     return success;
 
 //    pthread_exit(NULL);
@@ -177,31 +211,33 @@ void *customer(void *strut) {
     return NULL;
 }
 
-
-
 // (4 pts) overall working program
 int main(int argc, char** argv){
-    int  i;
     pthread_t customers[NUMBER_OF_CUSTOMERS];
     struct thread threads[NUMBER_OF_CUSTOMERS];
     srand(time(NULL));
 
-    for (i = 1; i < argc; ++i)
+    for (int i = 1; i < argc; ++i)
         available[i-1] = atoi(argv[i]); // copy resources to av.
 
-    for(i = 0; i < argc - 1; i++){
-        for (int j = 0; j < argc -1; j++) {
+    int size = argc - 1;
+
+    for(int i = 0; i < size; i++){
+        for (int j = 0; j < size; j++) {
             maximum[i][j] = rand() % available[i]; // allcat. random values to max based on values passed to available[]
             allocation[i][j] = rand() % available[i];
         }
     }
+
+    updateAvailable(size);
+    
     // TODO: allocation is never set
     // (4 pts) implementation of customer threads
 //    while(TRUE){
         isSafe();
 //        for (int n = 0; n < NUMBER_OF_CUSTOMERS; n++){
 //            threads[n].customer_num = n;
-//            threads[n].process = available;// TODO: This is probly wrong
+//            threads[n].process = available;// TODO: This is probably wrong
 //
 //            pthread_create( &customers[n], // thread
 //                    NULL, // ??
@@ -217,4 +253,20 @@ int main(int argc, char** argv){
 //    }
 
     return 0;
-} 
+}
+
+void updateAvailable(int size) {
+    for (int j =0; j < size; j++){
+        int sum = 0;
+        for (int i = 0; i < size; ++i) {
+            sum += allocation[i][j];
+        }
+        available[j] += sum;
+    }
+
+    printf("New Available: ");
+
+    for (int i = 0; i < size; ++i) {
+        printf("%d ", available[size]);
+    }
+}
