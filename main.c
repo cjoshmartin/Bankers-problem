@@ -6,6 +6,9 @@
 
 enum bool {FALSE=0, TRUE=1};
 
+#define NUMBER_OF_CUSTOMERS 5 // `n`
+#define NUMBER_OF_RESOURCES 3 // `m`
+
 /* # BANKER'S Algorthim
  *
  * For this projet, you will write a multithreaded program that implements
@@ -29,20 +32,8 @@ enum bool {FALSE=0, TRUE=1};
    7 of your book (p345/346). Use the Pthreads library and the VM that you built
    in HMW 1 to complete this project. */
 
-#define NUMBER_OF_CUSTOMERS 5 // `n`
-#define NUMBER_OF_RESOURCES 3 // `m`
+#include "my_structs.h"
 
-// the available amount of each resource
-int available[NUMBER_OF_RESOURCES];
-
-void updateAvailable(int size);
-
-// the maximum demand of each customer
-int maximum[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
-
-// the amount of currently allocated to each customer
-int allocation[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES] = { 0 };
-int need[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES] = { 0 };
 
 /*You may assume that you have three resources with the following number of
   instances (available array) The number of customers, n, can vary.  Initialize
@@ -61,23 +52,39 @@ int need[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES] = { 0 };
 int isGreaterThenZero(int val){
     return val > 0 ? val : 0;
 }
-void calculateANeed(int i, int j ) {
-    int amount = maximum[i][j] - allocation[i][j];
-    need[i][j] = isGreaterThenZero(amount);
+void calculateANeed(int i, int j , banker _them ) {
+    int amount = _them.maximum[i][j] - _them.allocation[i][j];
+    _them.need[i][j] = isGreaterThenZero(amount);
 }
 
-void updateNeed() {
+void updateNeed(banker _them) {
     int i =0 , j= 0;
     while (i < NUMBER_OF_CUSTOMERS ){
         while(j < NUMBER_OF_RESOURCES){
-            calculateANeed(i,j++);
+            calculateANeed(i,j++, _them);
         }
         i++;
     }
 }
 
+void updateAvailable(int size, banker _them) {
+    for (int j =0; j < size; j++){
+        int sum = 0;
+        for (int i = 0; i < size; ++i) {
+            sum += _them.allocation[i][j];
+        }
+        _them.available[j] += sum;
+    }
+
+    printf("New Available: ");
+
+    for (int i = 0; i < size; ++i) {
+        printf("%d ", _them.available[size]);
+    }
+}
+
 // (4 pts) implementation of safety algorithm
-int isSafe(){
+int isSafe(banker _them){
 
     int finish[NUMBER_OF_RESOURCES] = {FALSE},
             safeSeq[NUMBER_OF_CUSTOMERS],
@@ -85,10 +92,10 @@ int isSafe(){
             i =0,
             j =0;
 
-    updateNeed();
+    updateNeed(_them);
 
     for (j = 0; j < NUMBER_OF_CUSTOMERS; j++){
-        working[j]= available[j];
+        working[j]= _them.available[j];
     }
 
     while ( i < NUMBER_OF_CUSTOMERS){
@@ -101,14 +108,14 @@ int isSafe(){
                 j=0;
                 while (
                         j < NUMBER_OF_CUSTOMERS
-                        && need[process][j] > working[j]
+                        && _them.need[process][j] > working[j]
                         ) {
                     j++;
                 } // end of while
 
                 if (j == NUMBER_OF_RESOURCES){
                     for(int k= 0; k < NUMBER_OF_RESOURCES; k++)
-                        working[k] += allocation[process][k];
+                        working[k] += _them.allocation[process][k];
 
                     safeSeq[i++] = process;
 
@@ -141,30 +148,26 @@ int isSafe(){
 
 enum safeState { success= 0, failure = -1 };
 
-struct thread
-{
-    int customer_num;
-    int * process; // same for all
-};
+
 
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 // https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/7_Deadlocks.html
 
-int request_resources(int customer_num, int request[]){
+int request_resources(int customer_num, int request[], banker _them){
 
-    if (!isSafe())
+    if (!isSafe(_them))
         return failure;
 
     for (int i = 0; i < NUMBER_OF_CUSTOMERS ; i++){
         for (int j = 0; j < NUMBER_OF_RESOURCES ; ++j) {
-            if ( request[i] > need[i][j])
+            if ( request[i] > _them.need[i][j])
                 return failure;
         }
     }
 
-    while (request[customer_num] > available[customer_num]) {//TODO: Look at last TODO LOL
+    while (request[customer_num] > _them.available[customer_num]) {//TODO: Look at last TODO LOL
         pthread_mutex_lock(&mutex);
     }
     pthread_mutex_unlock(&mutex);
@@ -180,11 +183,11 @@ int request_resources(int customer_num, int request[]){
      * - Need = Need - Request
      */
 
-    available[customer_num]  -= request[customer_num];
+    _them.available[customer_num]  -= request[customer_num];
 
     for (int i = 0; i < NUMBER_OF_CUSTOMERS; ++i) {
-        allocation[customer_num][i] += request[customer_num]; // TODO: maybe is wrong
-        need[customer_num][i] -= request[i];
+        _them.allocation[customer_num][i] += request[customer_num]; // TODO: maybe is wrong
+        _them.need[customer_num][i] -= request[i];
     }
 
     return success;
@@ -192,8 +195,8 @@ int request_resources(int customer_num, int request[]){
 //    pthread_exit(NULL);
 }
 
-int release_resources(int customer_num, int release[]) {
-    if (!isSafe())
+int release_resources(int customer_num, int release[], banker _them) {
+    if (!isSafe(_them))
         return failure;
 
     return success;
@@ -201,40 +204,41 @@ int release_resources(int customer_num, int release[]) {
 
 void *customer(void *strut) {
 
-    struct thread _instance = *(struct thread*)strut;
+    banker _instance = *(banker *)strut;
 
-    int customer_num = _instance.customer_num,
-            * customers = _instance.process;
+    int customer_num = _instance.threads[customer_num].customer_num,
+            * customers = _instance.threads[customer_num].process;
 
-    request_resources(customer_num, customers);
-    release_resources(customer_num, customers);
+    request_resources(customer_num, customers, _instance);
+    release_resources(customer_num, customers, _instance);
     return NULL;
 }
 
+
+
 // (4 pts) overall working program
 int main(int argc, char** argv){
-    pthread_t customers[NUMBER_OF_CUSTOMERS];
-    struct thread threads[NUMBER_OF_CUSTOMERS];
+// the available amount of each resource
     srand(time(NULL));
-
+    banker _this;
     for (int i = 1; i < argc; ++i)
-        available[i-1] = atoi(argv[i]); // copy resources to av.
+        _this.available[i-1] = atoi(argv[i]); // copy resources to av.
 
     int size = argc - 1;
 
     for(int i = 0; i < size; i++){
         for (int j = 0; j < size; j++) {
-            maximum[i][j] = rand() % available[i]; // allcat. random values to max based on values passed to available[]
-            allocation[i][j] = rand() % available[i];
+            _this.maximum[i][j] = rand() % _this.available[i]; // allcat. random values to max based on values passed to available[]
+            _this.allocation[i][j] = rand() % _this.available[i];
         }
     }
 
-    updateAvailable(size);
+    updateAvailable(size, _this);
     
     // TODO: allocation is never set
     // (4 pts) implementation of customer threads
 //    while(TRUE){
-        isSafe();
+        isSafe(_this);
 //        for (int n = 0; n < NUMBER_OF_CUSTOMERS; n++){
 //            threads[n].customer_num = n;
 //            threads[n].process = available;// TODO: This is probably wrong
@@ -255,18 +259,4 @@ int main(int argc, char** argv){
     return 0;
 }
 
-void updateAvailable(int size) {
-    for (int j =0; j < size; j++){
-        int sum = 0;
-        for (int i = 0; i < size; ++i) {
-            sum += allocation[i][j];
-        }
-        available[j] += sum;
-    }
 
-    printf("New Available: ");
-
-    for (int i = 0; i < size; ++i) {
-        printf("%d ", available[size]);
-    }
-}
