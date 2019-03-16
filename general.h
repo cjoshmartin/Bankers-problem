@@ -8,7 +8,8 @@
 #define NUMBER_OF_CUSTOMERS 5 // `n`
 #define NUMBER_OF_RESOURCES 3 // `m`
 
-extern enum bool {FALSE=0, TRUE=1};
+#define TRUE 1
+#define FALSE 0
 
 /* # BANKER'S Algorthim
  *
