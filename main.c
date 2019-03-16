@@ -4,55 +4,14 @@
 #include <string.h> 
 #include <pthread.h>
 
-enum bool {FALSE=0, TRUE=1};
-
-#define NUMBER_OF_CUSTOMERS 5 // `n`
-#define NUMBER_OF_RESOURCES 3 // `m`
-
-/* # BANKER'S Algorthim
- *
- * For this projet, you will write a multithreaded program that implements
- * the banker's algorithm discussed in Section 7.5.3. Several customers request
- * and release resources from the bank. The banker will grant a request only
- * if it leaves the system in a safe state. A request that leaves the system in
- * an unsafe state will be deniced. The programming assignment combines
- * three separate topics:
- *  1) Multithreading
- *  2) preventing race conditions
- *  3) deadlock Avoidance
- *
- * ## The Banker
- * The banker consider requests from `n` customers from
- * `m` resources types (section 7.5.3). The banker will keep track of the
- * resource using the following data structures.
- *
-//-----------------------------------------------------------------------------
-*/
-/* In this project you will implement the Banker’s problem described in Chapter
-   7 of your book (p345/346). Use the Pthreads library and the VM that you built
-   in HMW 1 to complete this project. */
-
+#include "general.h"
 #include "my_structs.h"
 
-
-/*You may assume that you have three resources with the following number of
-  instances (available array) The number of customers, n, can vary.  Initialize
-  your maximum array with random numbers less than available array Every time
-  you make an allocation show the following:
- * The request
- * Allocation
- * Available
- * Maximum
- * Need
- Indicate whether the request was successful or denied In your report show an
- example of a denied request and a granted request and explain the results.
- Why was the request denied or granted. */
-
-
-int isGreaterThenZero(int val){
+int isGreaterThenZero(int val) {
     return val > 0 ? val : 0;
 }
-void calculateANeed(int i, int j , banker _them ) {
+
+void calculateANeed(int i, int j, banker _them) {
     int amount = _them.maximum[i][j] - _them.allocation[i][j];
     _them.need[i][j] = isGreaterThenZero(amount);
 }
@@ -76,11 +35,11 @@ void updateAvailable(int size, banker _them) {
         _them.available[j] += sum;
     }
 
-    printf("New Available: ");
+//    printf("New Available: ");
 
-    for (int i = 0; i < size; ++i) {
-        printf("%d ", _them.available[size]);
-    }
+//    for (int i = 0; i < size; ++i) {
+//        printf("%d ", _them.available[size]);
+//    }
 }
 
 // (4 pts) implementation of safety algorithm
