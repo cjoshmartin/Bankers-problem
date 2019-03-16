@@ -67,8 +67,9 @@ void updateNeed() {
     int i =0 , j= 0;
     while (i < NUMBER_OF_CUSTOMERS ){
         while(j < NUMBER_OF_RESOURCES){
-            calculateANeed(i++,j++);
+            calculateANeed(i,j++);
         }
+        i++;
     }
 }
 
@@ -189,28 +190,31 @@ int main(int argc, char** argv){
         available[i-1] = atoi(argv[i]); // copy resources to av.
 
     for(i = 0; i < argc - 1; i++){
-        for (int j = 0; j < argc -1; j++)
+        for (int j = 0; j < argc -1; j++) {
             maximum[i][j] = rand() % available[i]; // allcat. random values to max based on values passed to available[]
+            allocation[i][j] = rand() % available[i];
+        }
     }
     // TODO: allocation is never set
     // (4 pts) implementation of customer threads
-    while(TRUE){
-        for (int n = 0; n < NUMBER_OF_CUSTOMERS; n++){
-            threads[n].customer_num = n;
-            threads[n].process = available;// TODO: This is probly wrong
-
-            pthread_create( &customers[n], // thread
-                    NULL, // ??
-                    customer, // function to send the threads to
-                    &threads[n]
-                    );
-
-            pthread_join(
-                    customers[n],
-                    NULL // return value from join
-                    );
-        }
-    }
+//    while(TRUE){
+        isSafe();
+//        for (int n = 0; n < NUMBER_OF_CUSTOMERS; n++){
+//            threads[n].customer_num = n;
+//            threads[n].process = available;// TODO: This is probly wrong
+//
+//            pthread_create( &customers[n], // thread
+//                    NULL, // ??
+//                    customer, // function to send the threads to
+//                    &threads[n]
+//                    );
+//
+//            pthread_join(
+//                    customers[n],
+//                    NULL // return value from join
+//                    );
+//        }
+//    }
 
     return 0;
 } 
