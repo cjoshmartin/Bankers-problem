@@ -17,7 +17,7 @@ struct thread
 };
 
 typedef struct banker_resourse {
-    int available[NUMBER_OF_RESOURCES];
+    int available[NUMBER_OF_CUSTOMERS];
     // the maximum demand of each customer
     int maximum[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
     // the amount of currently allocated to each customer
