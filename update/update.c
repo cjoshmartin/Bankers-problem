@@ -4,6 +4,7 @@
 
 #include <printf.h>
 #include "update.h"
+#include "printer.h"
 
 int isGreaterThenZero(int val) {
     return val > 0 ? val : 0;
@@ -23,11 +24,7 @@ void updateAvailable(int size, banker _them) {
         _them.available[j] += sum;
     }
 
-    printf("New Available: ");
-
-    for (int i = 0; i < size; ++i) {
-        printf("%d ", _them.available[size]);
-    }
+    print_available();
 }
 
 void updateNeed(banker _them) {
