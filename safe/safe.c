@@ -7,53 +7,34 @@
 #include "update/update.h"
 
 int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]) {
+    // TODO: Do I check a single process or do I find a good seq?
+    //  TODO: How do I find a good seq?
 
-    int finish[NUMBER_OF_RESOURCES] = {FALSE},
-            safeSeq[NUMBER_OF_CUSTOMERS],
-            working[NUMBER_OF_CUSTOMERS],
+    int //  safeSeq[NUMBER_OF_CUSTOMERS],
+            working[NUMBER_OF_RESOURCES],
             i =0,
             j =0;
 
-//    updateNeed(&_them);
-
-    for (j = 0; j < NUMBER_OF_CUSTOMERS; j++){
+    for (j = 0; j < NUMBER_OF_RESOURCES; j++){
         working[j]= available[j];
     }
-        int found = FALSE;
+    int found = FALSE;
+    j=0;
+    while ( j < NUMBER_OF_RESOURCES && need[j] < working[j] ) {
+        j++;
+    } // end of while
 
-        for(int process = 0; process < NUMBER_OF_CUSTOMERS; process++){
+    if (j == NUMBER_OF_RESOURCES){
+        for(int k= 0; k < NUMBER_OF_RESOURCES; k++)
+            working[k] += allocation[k];
+        found = TRUE;
 
-            if(finish[process] == FALSE){
-                j=0;
-                while (
-                        j < NUMBER_OF_CUSTOMERS
-                        && need[process][j] > working[j]
-                        ) {
-                    j++;
-                } // end of while
+    } // end of if
 
-                if (j == NUMBER_OF_RESOURCES){
-                    for(int k= 0; k < NUMBER_OF_RESOURCES; k++)
-                        working[k] += allocation[process][k];
-
-                    safeSeq[i++] = process;
-
-                    finish[process] = TRUE;
-
-                    found = TRUE;
-
-                } // end of if
-            } // end of if
-        } // end of for
-
-        if(found == FALSE){
-            printf("System failed");
-            return FALSE;
-        }
-
-    printf("System is in safe state.\nSafe sequence is: ");
-    for (i = 0; i < NUMBER_OF_CUSTOMERS; i++)
-        printf("%d ", safeSeq[i]);
+    if(found == FALSE){
+        printf("System failed\n");
+        return FALSE;
+    }
 
     return TRUE;
 }
