@@ -13,7 +13,8 @@
 
 struct resource
 {
-    int customer_num;
+    int request_n;
+    int release_n;
     int request[NUMBER_OF_RESOURCES];
     int release[NUMBER_OF_RESOURCES];
 };
