@@ -7,9 +7,9 @@
 #include <update/update.h>
 
 #include "general.h"
-#include "my_structs.h"
-#include "utils.h"
-#include "printer.h"
+#include "bankers_struct.h"
+#include "utils/utils.h"
+#include "printer/printer.h"
 
 void init(banker *_them) {
     int size_i = NUMBER_OF_CUSTOMERS,

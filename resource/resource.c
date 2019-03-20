@@ -2,9 +2,9 @@
 // Created by Josh Martin on 2019-03-16.
 //
 
-#include <printer.h>
+#include <printer/printer.h>
 #include <update/update.h>
-#include <utils.h>
+#include <utils/utils.h>
 #include <printf.h>
 #include "resource.h"
 #include "safe/safe.h"

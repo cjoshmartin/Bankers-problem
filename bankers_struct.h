@@ -11,14 +11,6 @@
 //#define NUMBER_OF_CUSTOMERS 5 // `n`
 //#define NUMBER_OF_RESOURCES 3 // `m`
 
-typedef struct resource
-{
-    int request_n;
-    int release_n;
-    int request[NUMBER_OF_RESOURCES];
-    int release[NUMBER_OF_RESOURCES];
-} resource;
-
 typedef struct banker_resources {
     int available[NUMBER_OF_RESOURCES];
     int orginal[NUMBER_OF_RESOURCES]; // Used for check if available has hit its max

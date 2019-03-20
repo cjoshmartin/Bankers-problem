@@ -5,7 +5,7 @@
 #ifndef H4_UPDATE_H
 #define H4_UPDATE_H
 
-#include "../my_structs.h"
+#include "bankers_struct.h"
 
 int isGreaterThenZero(int val);
 

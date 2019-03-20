@@ -10,7 +10,7 @@
 // TODO: NEEDS MUTEX LOCKS */
 
 #include <pthread.h>
-#include "../my_structs.h"
+#include "bankers_struct.h"
 
 enum safeState { success= 0, failure = -1 };
 

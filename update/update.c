@@ -5,7 +5,7 @@
 #include <printf.h>
 #include <stdlib.h>
 #include "update.h"
-#include "printer.h"
+#include "printer/printer.h"
 
 int isGreaterThenZero(int val) {
     if (val < 0) {

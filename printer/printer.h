@@ -6,7 +6,7 @@
 #define H4_PRINTER_H
 
 #include "general.h"
-#include "my_structs.h"
+#include "bankers_struct.h"
 
 void printer_init(banker * them);
 void print_available();
