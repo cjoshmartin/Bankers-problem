@@ -7,19 +7,15 @@
 #include "update/update.h"
 
 int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]) {
-    // TODO: Do I check a single process or do I find a good seq?
-    //  TODO: How do I find a good seq?
 
-    int //  safeSeq[NUMBER_OF_CUSTOMERS],
-            working[NUMBER_OF_RESOURCES],
-            i =0,
+    int working[NUMBER_OF_RESOURCES],
             j =0;
 
-    for (j = 0; j < NUMBER_OF_RESOURCES; j++){
-        working[j]= available[j];
+    for (int i = 0; i < NUMBER_OF_RESOURCES; i++){
+        working[i]= available[j];
     }
+
     int found = FALSE;
-    j=0;
     while ( j < NUMBER_OF_RESOURCES && need[j] < working[j] ) {
         j++;
     } // end of while
