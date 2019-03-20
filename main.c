@@ -74,7 +74,7 @@ int main(int argc, char** argv){
 
 // the available amount of each resource
     banker _this;
-    int shouldThread = FALSE;
+    int shouldThread = TRUE;
 
     for ( int i = 1; i < argc; ++i) {
         int resource = atoi(argv[i]);

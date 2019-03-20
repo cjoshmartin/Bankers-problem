@@ -18,7 +18,6 @@ void request_init(banker * _them){
 
 int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {  // request  = resource allication request
     int isGood = FALSE;
-//    pthread_mutex_lock(&mutex);
 
     int available[NUMBER_OF_RESOURCES],
     need[NUMBER_OF_RESOURCES],
@@ -46,41 +45,50 @@ int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {  // 
         return failure;
     
     allocation_resources(_this, available, need, allocation);
-//    pthread_mutex_unlock(&mutex);
     return success;
 
-//    pthread_exit(NULL);
 }
 
 int release_resources(int customer_num, int release[NUMBER_OF_RESOURCES]) {
-
-//    pthread_mutex_lock(&mutex);
+    int isGood = FALSE;
 
     int available[NUMBER_OF_RESOURCES],
             need[NUMBER_OF_RESOURCES],
             allocation[NUMBER_OF_RESOURCES];
 
     for (int i = 0; i < NUMBER_OF_RESOURCES; i++){
-        available[i] = _this->available[i] + release[i];
+        int temp_ava = _this->available[i] + release[i];
+        if (temp_ava > _this->orginal[i])
+            return  failure;
+
+        available[i] = temp_ava;
         need[i] = _this->need[customer_num][i] + release[i];
         allocation[i] = _this->allocation[customer_num][i] - release[i];
     }
+    isGood = isSafe(available, need, allocation);
 
-    if (!isSafe(available, need, allocation))
+    if (!isGood)
         return failure;
 
     free_resources(_this, available, need, allocation);
-//    pthread_mutex_unlock(&mutex);
     return success;
 }
 
 void * request_resources_process(void *args){
+    pthread_mutex_lock(&mutex);
     print_reqest();
-   return (void *)request_resources(_this->resource_data.request_n, _this->resource_data.request);
+    void * output= (void *)request_resources(_this->resource_data.request_n, _this->resource_data.request);
+    pthread_mutex_unlock(&mutex);
+    pthread_exit(output);
+   return output;
 }
 
 void * release_resources_process(void *args){
+    pthread_mutex_lock(&mutex);
     print_release();
-    return (void *)release_resources(_this->resource_data.release_n, _this->resource_data.release);
+    void * output = (void *)release_resources(_this->resource_data.release_n, _this->resource_data.release);
+    pthread_mutex_unlock(&mutex);
+    pthread_exit(output);
+    return  output;
 }
 

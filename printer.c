@@ -61,7 +61,7 @@ void _printer_n(int arr[NUMBER_OF_RESOURCES]){
     printf("%3c", ' ');
 
     for (int i = 0; i < size_i; ++i)
-        printf("%7d", arr[i]);
+        printf("%3d", arr[i]);
 
     printf("\n");
 
