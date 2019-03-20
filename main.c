@@ -26,7 +26,7 @@ void init(banker *_them) {
     }
     printer_init(_them);
     request_init(_them);
-    print_all();
+//    print_all();
     updateNeed(_them);
     printf("\n");
     print_need();
@@ -43,12 +43,6 @@ void getThreaded(banker * _this) {
         );
     }
 
-    for (int i = 0; i < NUMBER_OF_CUSTOMERS; ++i) {
-        pthread_join(
-                ((*_this).customers[i]),
-                NULL // return value from join
-        );
-    }
 }
 
 // (4 pts) overall working program
