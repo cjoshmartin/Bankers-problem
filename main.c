@@ -39,8 +39,12 @@ int main(int argc, char** argv){
 // the available amount of each resource
     banker _this;
 
-    for ( int i = 1; i < argc; ++i)
-        _this.available[i-1] = atoi(argv[i]); // copy resources to av.
+    for ( int i = 1; i < argc; ++i) {
+        int resource = atoi(argv[i]);
+        int index = i - 1;
+        _this.available[index] = resource;
+        _this.orginal[index] = resource;
+    } // copy resources to av.
 
     init(&_this);
 

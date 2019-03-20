@@ -3,6 +3,7 @@
 //
 
 #include <printf.h>
+#include <stdlib.h>
 #include "update.h"
 #include "printer.h"
 
@@ -17,6 +18,10 @@ int isGreaterThenZero(int val) {
 
 void updateAvailable(int n, banker * _them) {
         for (int i = 0; i < NUMBER_OF_CUSTOMERS; i++) {
+            if ((_them->available[i] + _them->allocation[n][i]) > _them->orginal[i]){
+                printf("YOU BROKE SOMETHING");
+                exit(1);
+            }
              _them->available[i] += _them->allocation[n][i]; // TODO this is wrong
         }
         print_available();
