@@ -61,7 +61,7 @@ void _printer_n(int arr[NUMBER_OF_RESOURCES]){
     printf("%3c", ' ');
 
     for (int i = 0; i < size_i; ++i)
-        printf("%3d", arr[i]);
+        printf("%7d", arr[i]);
 
     printf("\n");
 
@@ -84,6 +84,7 @@ void _printer_nXm(int arr[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES]) {
 }
 
 void print_all(){
+    printf("\n");
     print_available();
     print_maximum();
     print_allocation();
