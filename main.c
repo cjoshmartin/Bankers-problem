@@ -58,7 +58,6 @@ int main(int argc, char** argv){
 
 // the available amount of each resource
     banker * _this = (banker *) (malloc(sizeof(banker)));
-    int shouldThread = FALSE;
 
     for ( int i = 1; i < argc; ++i) {
         int resource = atoi(argv[i]);
@@ -71,13 +70,7 @@ int main(int argc, char** argv){
 
 // (4 pts) implementation of customer resource_data
     while(TRUE){
-        if (shouldThread)
             getThreaded(_this);
-        else{
-            void * noop;
-            customer(noop);
-        }
-
     } // end of while loop
 
     free(_this);
