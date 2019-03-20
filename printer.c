@@ -13,17 +13,17 @@ void printer_init(banker * them) {
 }
 
 void print_available(){
-    printf("Available system resources are::\n");
+    printf("Available system resources are:\n");
     _printer_n(_this->available);
 }
 
 void print_reqest() {
-    printf('Request array:\n');
+    printf("Request array:\n");
     _printer_n(_this->resource_data.request);
 }
 
 void print_release() {
-    printf('Release array:\n');
+    printf("Release array:\n");
     _printer_n(_this->resource_data.release);
 }
 
