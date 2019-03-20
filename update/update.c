@@ -22,12 +22,12 @@ void updateAvailable(int n, banker * _them) {
         print_available();
     }
 
-void updateNeed(banker _them) {
+
 void updateNeed(banker * _them) {
-    while (i < NUMBER_OF_CUSTOMERS ){
-        while(j < NUMBER_OF_RESOURCES){
+    for (int i = 0; i < NUMBER_OF_CUSTOMERS; i++){
+        for (int j =0; j < NUMBER_OF_RESOURCES; j++) {
             int amount = _them->maximum[i][j] - _them->allocation[i][j];
+            _them->need[i][j] = isGreaterThenZero(amount);
         }
-        i++;
     }
 }

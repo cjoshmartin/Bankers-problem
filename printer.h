@@ -10,6 +10,8 @@
 
 void printer_init(banker * them);
 void print_available();
+void print_reqest();
+void print_release();
 void print_need();
 void print_maximum();
 void print_allocation();

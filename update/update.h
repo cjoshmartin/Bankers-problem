@@ -9,9 +9,8 @@
 
 int isGreaterThenZero(int val);
 
-void calculateANeed(int i, int j, banker _them);
 
-void updateNeed(banker _them);
+void updateNeed(banker * _them);
 
-void updateAvailable(int size, banker _them);
+void updateAvailable(int n, banker * _them);
 #endif //H4_UPDATE_H

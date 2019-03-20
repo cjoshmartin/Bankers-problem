@@ -17,6 +17,16 @@ void print_available(){
     _printer_n(_this->available);
 }
 
+void print_reqest() {
+    printf('Request array:\n');
+    _printer_n(_this->resource_data.request);
+}
+
+void print_release() {
+    printf('Release array:\n');
+    _printer_n(_this->resource_data.release);
+}
+
 void print_maximum() {
     printf("Processes (maximum resources):\n");
     _printer_nXm(_this->maximum);

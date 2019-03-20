@@ -13,7 +13,7 @@
 
 void init(banker * _them){
     int size_i = NUMBER_OF_CUSTOMERS,
-     size_j = NUMBER_OF_RESOURCES;
+            size_j = NUMBER_OF_RESOURCES;
 
     srand(time(NULL));
 
@@ -28,8 +28,10 @@ void init(banker * _them){
     printer_init(_them);
     print_all();
 
-    updateAvailable(size_i, _them);
+    updateNeed(_them);
 }
+
+int getRandomResource() { return rand() % NUMBER_OF_CUSTOMERS; }
 
 // (4 pts) overall working program
 int main(int argc, char** argv){
@@ -42,28 +44,35 @@ int main(int argc, char** argv){
 
     init(&_this);
 
+// (4 pts) implementation of customer resource_data
+    int i = 0;
+    while(TRUE){
+        int n_request = getRandomResource(),
+        n_release = getRandomResource();
+
+        _this.resource_data.customer_num = n_request;
+
+        for (int k = 0; k < NUMBER_OF_RESOURCES; ++k) { // TODO: Should 2d arrays be [][]
+            _this.resource_data.request[k] =  rand() % _this.need[n_request][k];
+            _this.resource_data.release[k] = rand() % _this.allocation[n_release][k];
+        }
+
+        pthread_create( &_this.customers[i], // resource
+                        NULL, // ??
+                        customer, // function to send the resource_data to
+                        &_this.resource_data
+        );
+
+        pthread_join(
+                _this.customers[n_request],
+                NULL // return value from join
+        );
+
+        i < NUMBER_OF_CUSTOMERS ? (i++) : (i=0);
+
+    } // end of while loop
 
     return 0;
 }
 
-
-// (4 pts) implementation of customer threads
-//    while(TRUE){
-//isSafe(_this);
-//        for (int n = 0; n < NUMBER_OF_CUSTOMERS; n++){
-//            threads[n].customer_num = n;
-//            threads[n].process = available;// TODO: This is probably wrong
-//
-//            pthread_create( &customers[n], // thread
-//                    NULL, // ??
-//                    customer, // function to send the threads to
-//                    &threads[n]
-//                    );
-//
-//            pthread_join(
-//                    customers[n],
-//                    NULL // return value from join
-//                    );
-//        }
-//    }
 
