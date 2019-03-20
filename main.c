@@ -44,6 +44,13 @@ void getThreaded(banker * _this) {
         );
     }
 
+    for (int i = 0; i < NUMBER_OF_CUSTOMERS; ++i) {
+        pthread_join(
+                ((*_this).customers[i]),
+                NULL // return value from join
+        );
+    }
+
 }
 
 // (4 pts) overall working program
