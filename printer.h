@@ -8,7 +8,7 @@
 #include "general.h"
 #include "my_structs.h"
 
-void printer_init(banker them);
+void printer_init(banker * them);
 void print_available();
 void print_need();
 void print_maximum();

@@ -8,5 +8,5 @@
 #include "../my_structs.h"
 
 // (4 pts) implementation of safety algorithm
-int isSafe(banker _them);
+int isSafe(banker * _them);
 #endif //H4_SAFE_H

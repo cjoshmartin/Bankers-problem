@@ -7,31 +7,26 @@
 #include "printer.h"
 
 int isGreaterThenZero(int val) {
-    return val > 0 ? val : 0;
-}
-
-void calculateANeed(int i, int j, banker _them) {
-    int amount = _them.maximum[i][j] - _them.allocation[i][j];
-    _them.need[i][j] = isGreaterThenZero(amount);
-}
-
-void updateAvailable(int size, banker _them) {
-    for (int j =0; j < size; j++){
-        int sum = 0;
-        for (int i = 0; i < size; ++i) {
-            sum += _them.allocation[i][j];
-        }
-        _them.available[j] += sum;
+    if (val < 0) {
+        printf("VALUE IS INVALID, JOSH! CHECK YOUR CODE HOMIE!");
+        return 0;
     }
 
-    print_available();
+    return val;
 }
 
+void updateAvailable(int n, banker * _them) {
+        for (int i = 0; i < NUMBER_OF_CUSTOMERS; i++) {
+             _them->available[i] += _them->allocation[n][i]; // TODO this is wrong
+        }
+        print_available();
+    }
+
 void updateNeed(banker _them) {
-    int i =0 , j= 0;
+void updateNeed(banker * _them) {
     while (i < NUMBER_OF_CUSTOMERS ){
         while(j < NUMBER_OF_RESOURCES){
-            calculateANeed(i,j++, _them);
+            int amount = _them->maximum[i][j] - _them->allocation[i][j];
         }
         i++;
     }

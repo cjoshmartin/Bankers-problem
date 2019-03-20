@@ -5,32 +5,32 @@
 #include <printf.h>
 #include "printer.h"
 
-banker _this;
+banker * _this;
 
 
-void printer_init(banker them) {
+void printer_init(banker * them) {
     _this = them;
 }
 
 void print_available(){
     printf("Available system resources are::\n");
-    _printer_n(_this.available);
+    _printer_n(_this->available);
 }
 
 void print_maximum() {
     printf("Processes (maximum resources):\n");
-    _printer_nXm(_this.maximum);
+    _printer_nXm(_this->maximum);
 }
 
 void print_allocation(){
     printf("Processes (currently allocated resources):\n");
-    _printer_nXm(_this.allocation);
+    _printer_nXm(_this->allocation);
 }
 
 void print_need() {
     printf("(Need = maximum resources - currently allocated resources)\n"
            "Processes (possibly needed resources):\n");
-    _printer_nXm(_this.need);
+    _printer_nXm(_this->need);
 }
 
 void _print_title(int size){
