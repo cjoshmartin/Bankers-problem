@@ -21,7 +21,7 @@ void request_init(banker * _them);
 int request_resources(int customer_num, int request[]);
 
 int release_resources(int customer_num, int release[]);
-void * request_resources_process(void *args);
-void * release_resources_process(void *args);
+
+void * customer(void *args);
 
 #endif //H4_RESOURCE_H

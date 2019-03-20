@@ -4,6 +4,7 @@
 
 #include <printer.h>
 #include <update/update.h>
+#include <utils.h>
 #include "resource.h"
 #include "safe/safe.h"
 
@@ -24,13 +25,6 @@ int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {  // 
     allocation[NUMBER_OF_RESOURCES];
 
     for (int i = 0; i < NUMBER_OF_RESOURCES; i++){
-        /*
-         * Check to see if the request can be granted safely, by pretending it has been granted and then seeing if the
-         * resulting state is safe. If so, grant the request, and if not, then the request must wait until its request
-         * can be granted safely.The procedure for granting a request ( or pretending to for testing purposes ) is:
-         * - Available = Available - Request
-         * - Need = Need - Request
-         */
         if (request[i] > _this->need[customer_num][i])
             return failure;
 
@@ -43,8 +37,9 @@ int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {  // 
 
     if (!isGood)
         return failure;
-    
-    allocation_resources(_this, available, need, allocation);
+
+    allocation_resources(_this, customer_num, available, need, allocation);
+
     return success;
 
 }
@@ -65,30 +60,35 @@ int release_resources(int customer_num, int release[NUMBER_OF_RESOURCES]) {
         need[i] = _this->need[customer_num][i] + release[i];
         allocation[i] = _this->allocation[customer_num][i] - release[i];
     }
+
     isGood = isSafe(available, need, allocation);
 
     if (!isGood)
         return failure;
 
-    free_resources(_this, available, need, allocation);
+    free_resources(_this, customer_num, available, need, allocation);
+
     return success;
 }
 
-void * request_resources_process(void *args){
+void * customer(void *args){
+
+    int n = getRandomResource(NUMBER_OF_CUSTOMERS),
+        is_request = getRandomResource(2),
+            a_resource[NUMBER_OF_RESOURCES];
+    void *output;
+
+
     pthread_mutex_lock(&mutex);
-    print_reqest();
-    void * output= (void *)request_resources(_this->resource_data.request_n, _this->resource_data.request);
+    for (int k = 0; k < NUMBER_OF_RESOURCES; ++k) {
+        a_resource[k] =  getRandomResource(  is_request ? (_this->need[n][k]) : (_this->allocation[n][k]) );
+    }
+
+    output = (void *) (is_request ? request_resources : release_resources)(n, a_resource);
+    (is_request ? print_request : print_release)(a_resource);
+
     pthread_mutex_unlock(&mutex);
     pthread_exit(output);
-   return output;
-}
 
-void * release_resources_process(void *args){
-    pthread_mutex_lock(&mutex);
-    print_release();
-    void * output = (void *)release_resources(_this->resource_data.release_n, _this->resource_data.release);
-    pthread_mutex_unlock(&mutex);
-    pthread_exit(output);
-    return  output;
+    return output;
 }
-

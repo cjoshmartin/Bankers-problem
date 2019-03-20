@@ -11,13 +11,13 @@
 //#define NUMBER_OF_CUSTOMERS 5 // `n`
 //#define NUMBER_OF_RESOURCES 3 // `m`
 
-struct resource
+typedef struct resource
 {
     int request_n;
     int release_n;
     int request[NUMBER_OF_RESOURCES];
     int release[NUMBER_OF_RESOURCES];
-};
+} resource;
 
 typedef struct banker_resources {
     int available[NUMBER_OF_RESOURCES];
@@ -28,9 +28,6 @@ typedef struct banker_resources {
     int allocation[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
     int need[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
     pthread_t customers[NUMBER_OF_CUSTOMERS];
-
-    struct resource resource_data;
-
 } banker;
 
 #endif //H4_STRUCTS_H

@@ -15,24 +15,22 @@ int isGreaterThenZero(int val) {
 
     return val;
 }
-void allocation_resources(banker * _this, int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]){
+void allocation_resources(banker * _this,int n, int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]){
     for (int i = 0; i < NUMBER_OF_RESOURCES ; ++i) {
-        int cust = _this->resource_data.request_n;
-        _this->need[cust][i] = need[i];
+        _this->need[n][i] = need[i];
         _this->available[i] = available[i];
-        _this->allocation[cust][i] = allocation[i];
+        _this->allocation[n][i] = allocation[i];
     }
 
     print_all();
 
 }
 
-void free_resources(banker * _this, int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]){
+void free_resources(banker * _this, int n, int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]){
     for (int i = 0; i < NUMBER_OF_RESOURCES ; ++i) {
-        int cust = _this->resource_data.request_n;
-        _this->need[cust][i] = need[i];
+        _this->need[n][i] = need[i];
         _this->available[i] = available[i];
-        _this->allocation[cust][i] = allocation[i];
+        _this->allocation[n][i] = allocation[i];
     }
 
     print_all();

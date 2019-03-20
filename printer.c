@@ -17,14 +17,14 @@ void print_available(){
     _printer_n(_this->available);
 }
 
-void print_reqest() {
+void print_request(int request [NUMBER_OF_RESOURCES]) {
     printf("Request array:\n");
-    _printer_n(_this->resource_data.request);
+    _printer_n(request);
 }
 
-void print_release() {
+void print_release(int release[NUMBER_OF_RESOURCES]) {
     printf("Release array:\n");
-    _printer_n(_this->resource_data.release);
+    _printer_n(release);
 }
 
 void print_maximum() {

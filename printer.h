@@ -10,8 +10,8 @@
 
 void printer_init(banker * them);
 void print_available();
-void print_reqest();
-void print_release();
+void print_request(int request[NUMBER_OF_RESOURCES]);
+void print_release(int release[NUMBER_OF_RESOURCES]);
 void print_need();
 void print_maximum();
 void print_allocation();
