@@ -5,6 +5,7 @@
 #include <printer.h>
 #include <update/update.h>
 #include <utils.h>
+#include <printf.h>
 #include "resource.h"
 #include "safe/safe.h"
 
@@ -76,7 +77,7 @@ void * customer(void *args){
     int n = getRandomResource(NUMBER_OF_CUSTOMERS),
         is_request = getRandomResource(2),
             a_resource[NUMBER_OF_RESOURCES];
-    void *output;
+    int output;
 
 
     pthread_mutex_lock(&mutex);
@@ -84,10 +85,15 @@ void * customer(void *args){
         a_resource[k] =  getRandomResource(  is_request ? (_this->need[n][k]) : (_this->allocation[n][k]) );
     }
 
-    output = (void *) (is_request ? request_resources : release_resources)(n, a_resource);
     (is_request ? print_request : print_release)(a_resource);
+    output = (is_request ? request_resources : release_resources)(n, a_resource);
+
+    if(output == failure)
+        printf("❌: P%d has failed \n\n", n+1 );
+    else
+        printf("✅: P%d was successful \n\n", n+1 );
 
     pthread_mutex_unlock(&mutex);
 
-    return output;
+    return (void *)output;
 }

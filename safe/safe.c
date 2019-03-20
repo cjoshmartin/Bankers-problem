@@ -27,11 +27,5 @@ int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], in
 
     } // end of if
 
-    if(found == FALSE){
-        printf("❌: System failed \n\n");
-        return FALSE;
-    }
-
-    printf("✅: System Successful \n\n");
-    return TRUE;
+    return found;
 }
