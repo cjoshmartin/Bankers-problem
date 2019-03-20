@@ -15,12 +15,13 @@
 enum safeState { success= 0, failure = -1 };
 
 
+void request_init(banker * _them);
+
 // https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/7_Deadlocks.html
+int request_resources(int customer_num, int request[]);
 
-int request_resources(int customer_num, int request[], banker _them);
-
-int release_resources(int customer_num, int release[], banker _them);
-
-void *customer(void *strut);
+int release_resources(int customer_num, int release[]);
+void * request_resources_process(void *args);
+void * release_resources_process(void *args);
 
 #endif //H4_RESOURCE_H

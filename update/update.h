@@ -12,5 +12,8 @@ int isGreaterThenZero(int val);
 
 void updateNeed(banker * _them);
 
+void allocation_resources(banker * _this, int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]);
+void free_resources(banker * _this, int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]);
+
 void updateAvailable(int n, banker * _them);
 #endif //H4_UPDATE_H

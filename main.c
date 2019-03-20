@@ -34,17 +34,47 @@ void init(banker * _them){
         }
     }
     printer_init(_them);
+    request_init(_them);
     print_all();
-
     updateNeed(_them);
+    printf("\n");
+    print_need();
 }
 
+
+int iter(int i) { return i < NUMBER_OF_CUSTOMERS ? (++i) : (0); }
+
+void getThreaded(banker *_this, int i) {
+
+    pthread_create(&(*_this).customers[i], // thread selected
+                        NULL, // ??
+                        request_resources_process, // function to send the resource_data to
+                        NULL // data being sent
+        );
+
+    pthread_create( &(*_this).customers[iter(i)], // thread selected
+                        NULL, // ??
+                        release_resources_process, // function to send the resource_data to
+                        NULL // data being sent
+        );
+
+    pthread_join(
+                (*_this).customers[i],
+                NULL // return value from join
+        );
+
+    pthread_join(
+                (*_this).customers[iter(i)],
+                NULL // return value from join
+        );
+}
 
 // (4 pts) overall working program
 int main(int argc, char** argv){
 
 // the available amount of each resource
     banker _this;
+    int shouldThread = FALSE;
 
     for ( int i = 1; i < argc; ++i) {
         int resource = atoi(argv[i]);
@@ -58,8 +88,8 @@ int main(int argc, char** argv){
 // (4 pts) implementation of customer resource_data
     int i = 0;
     while(TRUE){
-        int n_request = getRandomResource(NUMBER_OF_CUSTOMERS) + 1 ,
-        n_release = getRandomResource(NUMBER_OF_CUSTOMERS) + 1;
+        int n_request = getRandomResource(NUMBER_OF_CUSTOMERS),
+        n_release = getRandomResource(NUMBER_OF_CUSTOMERS);
 
         for (int k = 0; k < NUMBER_OF_RESOURCES; ++k) {
             _this.resource_data.request[k] =  getRandomResource(_this.need[n_request][k]);
@@ -68,16 +98,16 @@ int main(int argc, char** argv){
 
         _this.resource_data.request_n = n_request;
         _this.resource_data.release_n = n_release;
-                        customer, // function to send the resource_data to
-                        &_this.resource_data
-        );
 
-        pthread_join(
-                _this.customers[n_request],
-                NULL // return value from join
-        );
+        if (shouldThread)
+            getThreaded(&_this, i);
+        else{
+            void * noop;
+            request_resources_process(noop);
+            release_resources_process(noop);
+        }
 
-        i < NUMBER_OF_CUSTOMERS ? (i++) : (i=0);
+        i = iter(i);
 
     } // end of while loop
 
