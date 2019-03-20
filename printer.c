@@ -49,18 +49,19 @@ void _print_title(int size){
 
     for (int j = 0; j < size; ++j) {
         char title_letter = 65 + j;
-        printf("%2.9c", title_letter);
+        printf("%3c", title_letter);
     }
 
     printf("\n");
 }
-void _printer_n(int arr[NUMBER_OF_CUSTOMERS]){
-    int size_i = NUMBER_OF_CUSTOMERS;
+void _printer_n(int arr[NUMBER_OF_RESOURCES]){
+    int size_i = NUMBER_OF_RESOURCES;
 
     _print_title(size_i);
+    printf("%3c", ' ');
 
     for (int i = 0; i < size_i; ++i)
-        printf("%d ", arr[i]);
+        printf("%3d", arr[i]);
 
     printf("\n");
 
@@ -74,9 +75,9 @@ void _printer_nXm(int arr[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES]) {
     _print_title(size_j);
 
     for (int i = 0; i < size_i; ++i) {
-        printf("P%d ", i+1);
+        printf("P%d", i+1);
         for (int j = 0; j < size_j; ++j)
-            printf("%d ", arr[i][j] );
+            printf("%3d", arr[i][j] );
 
         printf("\n");
     }
