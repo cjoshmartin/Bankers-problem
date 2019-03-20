@@ -88,7 +88,6 @@ void * customer(void *args){
     (is_request ? print_request : print_release)(a_resource);
 
     pthread_mutex_unlock(&mutex);
-    pthread_exit(output);
 
     return output;
 }
