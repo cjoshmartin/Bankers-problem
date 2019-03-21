@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <pthread.h>
-#include <resource/resource.h>
-#include <update/update.h>
 
+#include "resource/resource.h"
+#include "update/update.h"
 #include "general.h"
 #include "bankers_struct.h"
 #include "utils/utils.h"

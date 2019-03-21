@@ -2,12 +2,12 @@
 // Created by Josh Martin on 2019-03-16.
 //
 
-#include <printer/printer.h>
-#include <update/update.h>
-#include <utils/utils.h>
-#include <printf.h>
+#include "../printer/printer.h"
+#include "../update/update.h"
+#include "../utils/utils.h"
+#include <stdio.h>
 #include "resource.h"
-#include "safe/safe.h"
+#include "../safe/safe.h"
 
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;

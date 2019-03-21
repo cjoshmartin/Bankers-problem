@@ -4,7 +4,7 @@
 
 #include "utils.h"
 #include <stdlib.h>
-#include "bankers_struct.h"
+#include "../bankers_struct.h"
 
 int getRandomResource(int val) {
     int ran = rand();

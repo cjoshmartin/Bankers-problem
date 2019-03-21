@@ -1,0 +1,25 @@
+project (banker){
+    exename = a.out
+    specific (make) {
+      compile_flags += -std=c99
+    }
+    Source_Files {
+        *.c
+        printer/*.c
+        resource/*.c
+        safe/*.c
+        update/*.c
+        utils/*.c
+        
+    }
+    Header_Files {
+        *.h
+        printer/*.h
+        resource/*.h
+        safe/*.h
+        update/*.h
+        utils/*.h
+    }
+    Inline_Files {
+    }
+}

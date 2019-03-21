@@ -5,12 +5,9 @@
 #ifndef H4_RESOURCE_H
 #define H4_RESOURCE_H
 
-/* (4 pts) implementation of request_resources
-// TODO: These functions should return 0 if successful otherwise -1
-// TODO: NEEDS MUTEX LOCKS */
-
+/* (4 pts) implementation of request_resources*/
 #include <pthread.h>
-#include "bankers_struct.h"
+#include "../bankers_struct.h"
 
 enum safeState { success= 0, failure = -1 };
 

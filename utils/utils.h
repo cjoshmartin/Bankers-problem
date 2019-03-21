@@ -5,7 +5,7 @@
 #ifndef H4_UTILS_H
 #define H4_UTILS_H
 
-#include "general.h"
+#include "../general.h"
 
 int getRandomResource(int val);
 

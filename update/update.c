@@ -2,10 +2,10 @@
 // Created by Josh Martin on 2019-03-16.
 //
 
-#include <printf.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "update.h"
-#include "printer/printer.h"
+#include "../printer/printer.h"
 
 int isGreaterThenZero(int val) {
     if (val < 0) {

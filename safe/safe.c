@@ -2,9 +2,9 @@
 // Created by Josh Martin on 2019-03-16.
 //
 
-#include <printf.h>
+#include <stdio.h>
 #include "safe.h"
-#include "update/update.h"
+#include "../update/update.h"
 
 int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]) {
 

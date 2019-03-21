@@ -5,8 +5,8 @@
 #ifndef H4_PRINTER_H
 #define H4_PRINTER_H
 
-#include "general.h"
-#include "bankers_struct.h"
+#include "../general.h"
+#include "../bankers_struct.h"
 
 void printer_init(banker * them);
 void print_available();

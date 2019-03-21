@@ -1,0 +1,88 @@
+#----------------------------------------------------------------------------
+#       Macros
+#----------------------------------------------------------------------------
+CC            = gcc
+CXX           = g++
+LD            = $(CXX) $(CCFLAGS) $(CPPFLAGS)
+AR            = ar
+PICFLAGS      = -fPIC
+CPPFLAGS      = $(PICFLAGS) $(GENFLAGS) -std=c99 -D_REENTRANT
+OBJEXT        = .o
+OUTPUT_OPTION = -o "$@"
+COMPILE.c     = $(CC) $(CFLAGS) $(CPPFLAGS) -c
+COMPILE.cc    = $(CXX) $(CCFLAGS) $(CPPFLAGS) -c
+LDFLAGS       = -L"."
+CCC           = $(CXX)
+MAKEFILE      = Makefile.banker
+DEPENDENCIES  = .depend.$(MAKEFILE)
+BTARGETDIR    = ./
+BIN           = $(BTARGETDIR)a.out$(EXESUFFIX)$(EXEEXT)
+CAT           = cat
+MV            = mv -f
+RM            = rm -rf
+CP            = cp -p
+NUL           = /dev/null
+MKDIR         = mkdir -p
+TESTDIRSTART  = test -d
+TESTDIREND    = ||
+TOUCH         = touch
+EXEEXT        = 
+LIBPREFIX     = lib
+LIBSUFFIX     = 
+GENFLAGS      = -O
+LDLIBS        = -ldl $(subst lib,-l,$(sort $(basename $(notdir $(wildcard /usr/lib/librt.so /lib/librt.so))))) -lpthread
+OBJS          = main$(OBJEXT) printer/printer$(OBJEXT) resource/resource$(OBJEXT) safe/safe$(OBJEXT) update/update$(OBJEXT) utils/utils$(OBJEXT)
+SRC           = main.c printer/printer.c resource/resource.c safe/safe.c update/update.c utils/utils.c
+LINK.cc       = $(LD) $(LDFLAGS)
+EXPORTFLAGS   = 
+DEPLIBS       = $(foreach lib, , $(foreach libpath, ., $(wildcard $(libpath)/lib$(lib).a)))
+
+#----------------------------------------------------------------------------
+#       Local targets
+#----------------------------------------------------------------------------
+
+all: $(BIN)
+
+$(BIN): $(OBJS) $(DEPLIBS)
+	@$(TESTDIRSTART) "$(BTARGETDIR)" $(TESTDIREND) $(MKDIR) "$(BTARGETDIR)"
+	$(LINK.cc) $(OBJS) $(LDLIBS) $(OUTPUT_OPTION)
+
+generated: $(GENERATED_DIRTY)
+	@-:
+
+main$(OBJEXT): main.c
+	$(COMPILE.c) $(EXPORTFLAGS) $(OUTPUT_OPTION) main.c
+
+printer/printer$(OBJEXT): printer/printer.c
+	$(COMPILE.c) $(EXPORTFLAGS) $(OUTPUT_OPTION) printer/printer.c
+
+resource/resource$(OBJEXT): resource/resource.c
+	$(COMPILE.c) $(EXPORTFLAGS) $(OUTPUT_OPTION) resource/resource.c
+
+safe/safe$(OBJEXT): safe/safe.c
+	$(COMPILE.c) $(EXPORTFLAGS) $(OUTPUT_OPTION) safe/safe.c
+
+update/update$(OBJEXT): update/update.c
+	$(COMPILE.c) $(EXPORTFLAGS) $(OUTPUT_OPTION) update/update.c
+
+utils/utils$(OBJEXT): utils/utils.c
+	$(COMPILE.c) $(EXPORTFLAGS) $(OUTPUT_OPTION) utils/utils.c
+
+clean:
+	-$(RM) $(OBJS)
+
+realclean: clean
+	-$(RM) $(BIN)
+
+check-syntax:
+	$(COMPILE.cc) $(EXPORTFLAGS) -Wall -Wextra -pedantic -fsyntax-only $(CHK_SOURCES)
+
+#----------------------------------------------------------------------------
+#       Dependencies
+#----------------------------------------------------------------------------
+
+
+depend:
+	-$(MPC_ROOT)/depgen.pl  $(CFLAGS) $(CCFLAGS) $(CPPFLAGS) -f $(DEPENDENCIES) $(SRC) 2> $(NUL)
+
+-include $(DEPENDENCIES)
