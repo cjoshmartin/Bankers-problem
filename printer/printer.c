@@ -2,7 +2,7 @@
 // Created by Josh Martin on 2019-03-18.
 //
 
-#include <printf.h>
+#include <stdio.h>
 #include "printer.h"
 
 #define Number_of_lines 50
