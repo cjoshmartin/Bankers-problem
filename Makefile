@@ -29,3 +29,6 @@ banker-depend:
 
 project_name_list:
 	@echo banker
+
+run:
+	./a.out 10 5 7
