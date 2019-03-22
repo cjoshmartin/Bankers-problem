@@ -9,12 +9,80 @@
 
 # Introduction
 
-In this project I will implement the Banker’s problem described in Chapter 7 of Ir book (p345/346). Use the Pthreads library and the VM that I built in HMW 1 to complete this project.
+In this project I will implement the Banker’s problem described in Chapter 7 of in my operating systems book (p345/346). Using the Pthreads library, Mutexes and the VM that I built in HMW 3 to complete this project.
 
 # Methodology
 
+## Header Files
+
+```c
+
+#ifndef H4_STRUCTS_H
+#define H4_STRUCTS_H
+
+#include <pthread.h>
+#include "general.h"
+
+//#define NUMBER_OF_CUSTOMERS 5 // `n`
+//#define NUMBER_OF_RESOURCES 3 // `m`
+```
+
+This Struct where all data is held by the program. All thread share pointer to an instance of this struct.
+
+```c
+typedef struct banker_resources {
+    int available[NUMBER_OF_RESOURCES];
+    int orginal[NUMBER_OF_RESOURCES]; // Used for check if available has hit its max
+    // the maximum demand of each customer
+    int maximum[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
+    // the amount of currently allocated to each customer
+    int allocation[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
+    int need[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
+    pthread_t customers[NUMBER_OF_CUSTOMERS];
+} banker;
+#endif //H4_STRUCTS_H
+```
+
+These Defines are used all over the program to define array sizes and make it easier to read if statements
+
+```c
+
+#ifndef H4_GENERAL_H
+#define H4_GENERAL_H
+
+#define NUMBER_OF_CUSTOMERS 5 // `n`
+#define NUMBER_OF_RESOURCES 3 // `m`
+
+#define TRUE 1
+#define FALSE 0
+
+#endif //H4_GENERAL_H
+
+```
+## Utils
+
+Common place to create a random numbers given a `val`. This program will return a value of `[0,val]`.
+
+```c
+
+#include "utils.h"
+#include <stdlib.h>
+#include "../bankers_struct.h"
+
+int getRandomResource(int val) {
+    int ran = rand();
+    if (val < 1)
+        return 0;
+
+    int output = ran % val;
+    return output;
+}
+```
+
+
 ## Main
 
+Starts up the program to start running.
 ```c
 void init(banker *_them) {
     int size_i = NUMBER_OF_CUSTOMERS,
@@ -37,7 +105,10 @@ void init(banker *_them) {
     printf("\n");
     print_need();
 }
+```
 
+Where the threads are created and waited on to finish
+```c
 void getThreaded(banker * _this) {
 
     for (int i = 0; i < NUMBER_OF_CUSTOMERS; ++i) {
@@ -57,7 +128,11 @@ void getThreaded(banker * _this) {
     }
 
 }
+```
 
+Takes a array of available resources, then create an instance of `banker` using malloc (this way all threads share the pointer). Lastly, copies data to the banker struct and starts initialization.
+
+```c
 // (4 pts) overall working program
 int main(int argc, char** argv){
 
@@ -83,76 +158,25 @@ int main(int argc, char** argv){
 }
 ```
 
-## Header Files
-
-```c
-//
-// Created by Josh Martin on 2019-03-16.
-//
-
-#ifndef H4_STRUCTS_H
-#define H4_STRUCTS_H
-
-#include <pthread.h>
-#include "general.h"
-
-//#define NUMBER_OF_CUSTOMERS 5 // `n`
-//#define NUMBER_OF_RESOURCES 3 // `m`
-
-typedef struct banker_resources {
-    int available[NUMBER_OF_RESOURCES];
-    int orginal[NUMBER_OF_RESOURCES]; // Used for check if available has hit its max
-    // the maximum demand of each customer
-    int maximum[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
-    // the amount of currently allocated to each customer
-    int allocation[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
-    int need[NUMBER_OF_CUSTOMERS][NUMBER_OF_RESOURCES];
-    pthread_t customers[NUMBER_OF_CUSTOMERS];
-} banker;
-
-#endif //H4_STRUCTS_H
-//
-// Created by Josh Martin on 2019-03-16.
-//
-
-#ifndef H4_GENERAL_H
-#define H4_GENERAL_H
-
-#define NUMBER_OF_CUSTOMERS 5 // `n`
-#define NUMBER_OF_RESOURCES 3 // `m`
-
-#define TRUE 1
-#define FALSE 0
-
-#endif //H4_GENERAL_H
-
-```
-
 
 ## Request/Release Algorithms
 
+Initializating the mutex to lock my program
 ```c
-//
-// Created by Josh Martin on 2019-03-16.
-//
-
-#include "../printer/printer.h"
-#include "../update/update.h"
-#include "../utils/utils.h"
-#include <stdio.h>
-#include "resource.h"
-#include "../safe/safe.h"
-
-
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+```
+This create a common shared pointer between threads and the rest of the functions in the file.
 
+```c
 banker * _this;
-
 void request_init(banker * _them){
     _this = _them;
 }
+```
+This function will take a request, and create temporary arrays to test if the request is valid. If so the program will allocate those resources.
 
-int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) { 
+```c
+int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {
     int isGood = FALSE;
 
     int available[NUMBER_OF_RESOURCES],
@@ -161,7 +185,7 @@ int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {
 
     for (int i = 0; i < NUMBER_OF_RESOURCES; i++){
         if (request[i] > _this->need[customer_num][i]) {
-            printf("\n\nERROR: request[%d] = %d > _this->need[%d][%d]= %d\n\n", 
+            printf("\n\nERROR: request[%d] = %d > _this->need[%d][%d]= %d\n\n",
             i, request[i], customer_num, i, _this->need[customer_num][i]);
             return failure;
         }
@@ -187,7 +211,10 @@ int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {
     return success;
 
 }
+```
+This function will take a request, and create temporary arrays to test if the request is valid. If so the program will release those resources.
 
+```c
 int release_resources(int customer_num, int release[NUMBER_OF_RESOURCES]) {
     int isGood = FALSE;
 
@@ -222,6 +249,11 @@ int release_resources(int customer_num, int release[NUMBER_OF_RESOURCES]) {
 
     return success;
 }
+```
+
+This is where each thread jumps to. Base a on a random number [0,2), The function will either try to release or request resources. The function will then Indicate if it was successful or not.
+
+```c
 
 void * customer(void *args){
 
@@ -233,8 +265,8 @@ void * customer(void *args){
 
     pthread_mutex_lock(&mutex);
     for (int k = 0; k < NUMBER_OF_RESOURCES; ++k) {
-        a_resource[k] =  getRandomResource( 
-        is_request ? 
+        a_resource[k] =  getRandomResource(
+        is_request ?
         (_this->need[n][k])
         : (_this->allocation[n][k])
         );
@@ -258,20 +290,9 @@ void * customer(void *args){
 ## Safety Algorthim
 
 ```c
-
-
-//
-// Created by Josh Martin on 2019-03-16.
-//
-
-#include <stdio.h>
-#include <printer/printer.h>
-#include "safe.h"
-#include "../update/update.h"
-
 int isSafe(
-int available[NUMBER_OF_RESOURCES], 
-int need[NUMBER_OF_RESOURCES], 
+int available[NUMBER_OF_RESOURCES],
+int need[NUMBER_OF_RESOURCES],
 int allocation[NUMBER_OF_RESOURCES]
 ) {
 
@@ -313,16 +334,8 @@ int allocation[NUMBER_OF_RESOURCES]
 
 ## Free/Alocate resoucres
 
+This function make sure no values are negative.
 ```c
-//
-// Created by Josh Martin on 2019-03-16.
-//
-
-#include <stdio.h>
-#include <stdlib.h>
-#include "update.h"
-#include "../printer/printer.h"
-
 int isGreaterThenZero(int val) {
     if (val < 0) {
         printf("VALUE IS INVALID, JOSH! CHECK YOUR CODE HOMIE!");
@@ -331,9 +344,15 @@ int isGreaterThenZero(int val) {
 
     return val;
 }
+
+```
+
+This function allocates the resource requested to the current instance of banker
+
+```c
 void allocation_resources(
-banker * _this,int n, 
-int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], 
+banker * _this,int n,
+int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES],
 int allocation[NUMBER_OF_RESOURCES]
 ){
     for (int i = 0; i < NUMBER_OF_RESOURCES ; ++i) {
@@ -345,11 +364,15 @@ int allocation[NUMBER_OF_RESOURCES]
     print_all();
 
 }
+```
 
+This function releases the resource requested of the current instance of banker
+
+```c
 void free_resources(
-banker * _this, 
-int n, int available[NUMBER_OF_RESOURCES], 
-int need[NUMBER_OF_RESOURCES], 
+banker * _this,
+int n, int available[NUMBER_OF_RESOURCES],
+int need[NUMBER_OF_RESOURCES],
 int allocation[NUMBER_OF_RESOURCES]
 ){
     for (int i = 0; i < NUMBER_OF_RESOURCES ; ++i) {
@@ -361,7 +384,11 @@ int allocation[NUMBER_OF_RESOURCES]
     print_all();
 
 }
+```
 
+This function updates need.
+
+```c
 void updateNeed(banker * _them) {
     for (int i = 0; i < NUMBER_OF_CUSTOMERS; i++){
         for (int j =0; j < NUMBER_OF_RESOURCES; j++) {
@@ -370,37 +397,23 @@ void updateNeed(banker * _them) {
         }
     }
 }
-
 ```
 
-## Utils
-
-```c
-
-
-//
-// Created by Josh Martin on 2019-03-20.
-//
-
-#include "utils.h"
-#include <stdlib.h>
-#include "../bankers_struct.h"
-
-int getRandomResource(int val) {
-    int ran = rand();
-    if (val < 1)
-        return 0;
-
-    int output = ran % val;
-    return output;
-}
-```
 
 
 # Results
 
 <!--Indicate whether the request was successful or denied In Ir report show an example of a denied request and a granted request and explain the results. Why was the request denied or granted.-->
 
+This is the results of my program:
+
+* A check mark - indicates a success and will print out the contents of allocation, available, maximum, AND need.
+* An X mark - indicates a failure and the program will report why it failed
+
+_Note: The check mark and X will not show up in this report because Pandoc (the tool I am using to compile my report) does not support it_
+
+
+The section below happens when program is passed `args` and start to `init`'s :
 ```
 ./a.out 10 5 7
 
@@ -431,7 +444,15 @@ P3  0  0  0
 P4  0  0  0
 P5  0  0  0
 --------------------------------------------------
+```
 
+
+
+After the program `init`'s, then program will update the need:
+
+
+
+```
 NEED, UPDATED:
     A  B  C
 P1  9  9  9
@@ -439,6 +460,14 @@ P2  3  1  1
 P3  4  4  2
 P4  1  6  1
 P5  3  2  4
+
+```
+
+
+
+Then the program will start making request:
+
+```
 
 P4: REQUESTING RESOURCES ARRAY:
 --------------------------------------------------
@@ -491,6 +520,14 @@ P5  3  2  4
 --------------------------------------------------
 ✅: P4 was successful
 
+```
+
+
+The request was successful because their are enough resources to make the system happy.
+
+
+```
+
 P3: REQUESTING RESOURCES ARRAY:
 --------------------------------------------------
     A  B  C
@@ -500,19 +537,26 @@ P3: REQUESTING RESOURCES ARRAY:
 ERROR: avaiable[1] = -1 is less then 0
 
 ❌: P3 has failed
-
-
 ```
+
+This request fail because it would cause available to become negative.
+
+---
+
+This program runs so fast at times it is hard to see what is going on. Due to the fact, that there are 5 threads running at a time.  This why it is important the checkmark and X to see at a glance what is going on in the system.
+
+This program could be even faster if it did not depend on shared data and each thread used it's own stack/heap.
 
 # Summary
 
+In summary, There were quite a few challenges with this project. The first challenge was how to use mutexes and pthreads together correctly. I have not had experience before with mutexes and pthreads before. The threads made it hard to debug at first but I figured out that I should first try debugging my program as a single process program then it will work the same when threaded. Furthermore, I learn when it is important to lock an area using mutexes, at first my program's variables would have junk but adding mutex locks around where the share memory is writing to the variables, the contents were no longer junk. Finally, getting clarification on what I  need to do with respect to the bankers problem and threads because the book is vary unclear on what it exactly wants me to implement. All examples online don't use threads either. But I was able to get help from my Teacher and our TA (Conner) to be able to finish this project. These were interesting problems to work through and I feel like the have made me grown as a developer.
+
+
 # Appendix
-
-## References
-
 
 ## Printer Code
 
+This code is not needed to understand the algorithm but is used to print out the contents of the arrays in a pretty way.
 ```c
 #include <stdio.h>
 #include "printer.h"
