@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <pthread.h>
-#include <zconf.h>
 
 #include "resource/resource.h"
 #include "update/update.h"
@@ -78,7 +77,6 @@ int main(int argc, char** argv){
             getThreaded(_this);
             else {
                 customer(noop);
-                usleep(1000000);
             }
     } // end of while loop
 
