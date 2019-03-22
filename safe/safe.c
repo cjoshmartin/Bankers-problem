@@ -31,6 +31,7 @@ int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], in
     printf("\n");
     _print_lines(50);
 
+    while ( j < NUMBER_OF_RESOURCES && need[j] <= working[j] ) {
         j++;
     } // end of while
 

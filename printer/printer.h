@@ -9,6 +9,7 @@
 #include "../bankers_struct.h"
 
 void printer_init(banker * them);
+void _print_lines(int size);
 void print_available();
 void print_request(int request[NUMBER_OF_RESOURCES]);
 void print_release(int release[NUMBER_OF_RESOURCES]);
