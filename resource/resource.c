@@ -104,10 +104,10 @@ void * customer(void *args){
     output = (is_request ? request_resources : release_resources)(n, a_resource);
 
     if(output == failure) {
-        printf("❌: P%d has failed \n\n", n + 1);
+        printf("✗: P%d has failed \n\n", n + 1);
         }
         else
-        printf("✅: P%d was successful \n\n", n+1 );
+        printf("✔︎ :P%d was successful \n\n", n+1 );
 
     pthread_mutex_unlock(&mutex);
 
