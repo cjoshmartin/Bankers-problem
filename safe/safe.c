@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include <printer/printer.h>
+#include "../printer/printer.h"
 #include "safe.h"
 #include "../update/update.h"
 
