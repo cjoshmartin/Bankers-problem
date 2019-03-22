@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <pthread.h>
+#include <zconf.h>
 
 #include "resource/resource.h"
 #include "update/update.h"
@@ -11,11 +12,12 @@
 #include "utils/utils.h"
 #include "printer/printer.h"
 
+#define SHOULD_THREAD TRUE
+
 void init(banker *_them) {
     int size_i = NUMBER_OF_CUSTOMERS,
             size_j = NUMBER_OF_RESOURCES;
 
-    srand(time(NULL));
 
     for(int i = 0; i < size_i; i++){
         for (int j = 0; j < size_j; j++) {
@@ -56,6 +58,7 @@ void getThreaded(banker * _this) {
 // (4 pts) overall working program
 int main(int argc, char** argv){
 
+    srand(time(NULL));
 // the available amount of each resource
     banker * _this = (banker *) (malloc(sizeof(banker)));
 
@@ -69,8 +72,14 @@ int main(int argc, char** argv){
     init(_this);
 
 // (4 pts) implementation of customer resource_data
+    void * noop;
     while(TRUE){
+            if (SHOULD_THREAD)
             getThreaded(_this);
+            else {
+                customer(noop);
+                usleep(1000000);
+            }
     } // end of while loop
 
     free(_this);
