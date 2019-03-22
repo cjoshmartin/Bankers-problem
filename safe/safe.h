@@ -8,5 +8,5 @@
 #include "../bankers_struct.h"
 
 // (4 pts) implementation of safety algorithm
-int isSafe(int available[NUMBER_OF_RESOURCES], int  need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]);
+int isSafe( banker * _them, int available[NUMBER_OF_RESOURCES], int  need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]);
 #endif //H4_SAFE_H

@@ -42,7 +42,7 @@ int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {  // 
        allocation[i] = _this->allocation[customer_num][i] + request[i];
     }
 
-    isGood = isSafe(available, need, allocation);
+    isGood = isSafe(_this,available, need, allocation);
 
     if (!isGood)
         return failure;
@@ -76,11 +76,6 @@ int release_resources(int customer_num, int release[NUMBER_OF_RESOURCES]) {
 
             return 0;
     }
-
-    isGood = isSafe(available, need, allocation);
-
-    if (!isGood)
-        return failure;
 
     free_resources(_this, customer_num, available, need, allocation);
 

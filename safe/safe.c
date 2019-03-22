@@ -7,16 +7,46 @@
 #include "safe.h"
 #include "../update/update.h"
 
-int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]) {
+int finishCheck(banker * _them, int finish[NUMBER_OF_CUSTOMERS], int work[NUMBER_OF_RESOURCES]) {
+    int unsafe = 0,
+    zero_count = 0;
 
-    int working[NUMBER_OF_RESOURCES],
-            j =0;
+    for (int i = 0; i < NUMBER_OF_CUSTOMERS; ++i) {
+        if (!finish[i]) {
+            // check that need is > to work for all resources
+            for (int j = 0; j < NUMBER_OF_RESOURCES; ++j) {
 
-    for (int i = 0; i < NUMBER_OF_RESOURCES; i++){
-        working[i]= available[j];
+                if (_them->need[i][j] > work[j]) {
+                    unsafe = 1;	// should loop back and recheck?
+                    break;
+                }
+            }
+            // if so, place in safe sequence
+            if (!unsafe) {
+                for (int j = 0; j < NUMBER_OF_RESOURCES; ++j) {
+                    work[j] += _them->allocation[i][j];
+                }
+                finish[i] = 1;
+            }
+            else {
+                zero_count++;
+            }
+        }
     }
 
-    int found = FALSE;
+    return (zero_count > 0) ? 1 : 0;
+
+}
+
+int isSafe(banker *_them, int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], int allocation[NUMBER_OF_RESOURCES]) {
+
+    int finish[NUMBER_OF_CUSTOMERS] = {FALSE};
+    int work[NUMBER_OF_RESOURCES];
+
+    for (int i = 0; i < NUMBER_OF_RESOURCES; ++i) {
+        work[i] = available[i];
+    }
+
     printf("\n\n");
     _print_lines(50);
     printf("Is Safe Check:\n");
@@ -31,14 +61,21 @@ int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], in
     printf("\n");
     _print_lines(50);
 
-    while ( j < NUMBER_OF_RESOURCES && need[j] <= working[j] ) {
-        j++;
-    } // end of while
+    for (int j = 0; j < NUMBER_OF_CUSTOMERS; ++j) {
+        if(finishCheck(_them, finish, work))
+            continue;
 
-    if (j == NUMBER_OF_RESOURCES){
-        found = TRUE;
+        break;
+    }
 
-    } // end of if
+    // Confirm that all finish[i] are true before leaving allocation
+    for (int i = 0; i < NUMBER_OF_CUSTOMERS; ++i) {
+        if (!finish[i])
+            return FALSE;
 
-    return found;
+    }
+
+    return TRUE;
 }
+
+
