@@ -35,8 +35,6 @@ int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], in
     } // end of while
 
     if (j == NUMBER_OF_RESOURCES){
-        for(int k= 0; k < NUMBER_OF_RESOURCES; k++)
-            working[k] += allocation[k];
         found = TRUE;
 
     } // end of if

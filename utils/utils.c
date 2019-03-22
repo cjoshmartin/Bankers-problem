@@ -15,5 +15,4 @@ int getRandomResource(int val) {
     return output;
 }
 
-int iter(int i) { return i < NUMBER_OF_RESOURCES ? (++i) : (0); }
 
