@@ -3,6 +3,7 @@
 //
 
 #include <stdio.h>
+#include <printer/printer.h>
 #include "safe.h"
 #include "../update/update.h"
 
@@ -16,7 +17,20 @@ int isSafe(int available[NUMBER_OF_RESOURCES], int need[NUMBER_OF_RESOURCES], in
     }
 
     int found = FALSE;
-    while ( j < NUMBER_OF_RESOURCES && need[j] < working[j] ) {
+    printf("\n\n");
+    _print_lines(50);
+    printf("Is Safe Check:\n");
+    _print_lines(50);
+    printf("NeeD :\n");
+    _printer_n(need);
+    printf("Allocation\n");
+    _printer_n(allocation);
+    printf("Available\n");
+    _printer_n(available);
+    _print_lines(50);
+    printf("\n");
+    _print_lines(50);
+
         j++;
     } // end of while
 

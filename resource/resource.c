@@ -26,10 +26,18 @@ int request_resources(int customer_num, int request[NUMBER_OF_RESOURCES]) {  // 
     allocation[NUMBER_OF_RESOURCES];
 
     for (int i = 0; i < NUMBER_OF_RESOURCES; i++){
-        if (request[i] > _this->need[customer_num][i])
+        if (request[i] > _this->need[customer_num][i]) {
+            printf("\n\nERROR: request[%d] = %d > _this->need[%d][%d]= %d\n\n", i, request[i], customer_num, i, _this->need[customer_num][i]);
             return failure;
+        }
 
        available[i] = _this->available[i] - request[i];
+
+       if (available[i] < 0) {
+           printf("\n\nERROR: avaiable[%d] = %d is less then 0\n\n", i, available[i]);
+           return failure;
+       }
+
        need[i] = _this->need[customer_num][i] - request[i];
        allocation[i] = _this->allocation[customer_num][i] + request[i];
     }
@@ -54,12 +62,19 @@ int release_resources(int customer_num, int release[NUMBER_OF_RESOURCES]) {
 
     for (int i = 0; i < NUMBER_OF_RESOURCES; i++){
         int temp_ava = _this->available[i] + release[i];
-        if (temp_ava > _this->orginal[i])
-            return  failure;
+        if (temp_ava > _this->orginal[i]) {
+            printf("\n\nERROR: temp avaiable[%d] = %d > orginal[%d]= %d\n\n",i,temp_ava, i, _this->orginal[i] );
+            return failure;
+        }
 
         available[i] = temp_ava;
         need[i] = _this->need[customer_num][i] + release[i];
         allocation[i] = _this->allocation[customer_num][i] - release[i];
+        if (allocation[i] < 0)
+
+            printf("\n\nERROR: Allocation would be less then zero\n\n");
+
+            return 0;
     }
 
     isGood = isSafe(available, need, allocation);
@@ -84,13 +99,14 @@ void * customer(void *args){
     for (int k = 0; k < NUMBER_OF_RESOURCES; ++k) {
         a_resource[k] =  getRandomResource(  is_request ? (_this->need[n][k]) : (_this->allocation[n][k]) );
     }
-
+    printf("P%d: ", n+1);
     (is_request ? print_request : print_release)(a_resource);
     output = (is_request ? request_resources : release_resources)(n, a_resource);
 
-    if(output == failure)
-        printf("❌: P%d has failed \n\n", n+1 );
-    else
+    if(output == failure) {
+        printf("❌: P%d has failed \n\n", n + 1);
+        }
+        else
         printf("✅: P%d was successful \n\n", n+1 );
 
     pthread_mutex_unlock(&mutex);
